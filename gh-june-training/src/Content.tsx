@@ -77,44 +77,25 @@ const pizzaStore = new PizzaStore();
 
 export const PizzaContainer: FunctionComponent = observer(() => {
   console.log('PizzaContainer');
-  //   useEffect(() => {
-  //     action(() => {
-  //       console.log('useEffect');
-  //       pizzaStore.pizzas = fetchPizza();
-  //     })();
+  useEffect(() => pizzaStore.setPizzas(fetchPizza()), []);
+  //   const [pizzas, setPizzas] = useState<Pizza[]>(() => fetchPizza());
+
+  //   const handleUpdatePizza = useCallback((id: number, update: Partial<Pizza>) => {
+  //     setPizzas((pizzas) => {
+  //       const idx = pizzas.findIndex((pizza) => pizza.id === id);
+  //       pizzas[idx] = { ...pizzas[idx], ...update };
+  //       console.log('pizzas', pizzas);
+  //       return [...pizzas];
+  //     });
   //   }, []);
-  //   action(() => {
-  //     pizzaStore.pizzas = fetchPizza();
-  //   })
-  //   useEffect(action(() => {
-  //     pizzaStore.pizzas = fetchPizza();
-  //   }) []);
-  const [pizzas, setPizzas] = useState<Pizza[]>(() => fetchPizza());
 
   const handleUpdatePizza = useCallback((id: number, update: Partial<Pizza>) => {
-    setPizzas((pizzas) => {
-      const idx = pizzas.findIndex((pizza) => pizza.id === id);
-      pizzas[idx] = { ...pizzas[idx], ...update };
-      console.log('pizzas', pizzas);
-      return [...pizzas];
-    });
+    const idx = pizzaStore.pizzas.findIndex((pizza) => pizza.id === id);
+    pizzaStore.pizzas[idx] = { ...pizzaStore.pizzas[idx], ...update };
+    pizzaStore.setPizzas(pizzaStore.pizzas);
   }, []);
 
-  //   const handleUpdatePizza = useCallback(
-  //     action((id: number, update: Partial<Pizza>) => {
-  //       const idx = pizzaStore.pizzas.findIndex((pizza) => pizza.id === id);
-  //       pizzaStore.pizzas[idx] = { ...pizzaStore.pizzas[idx], ...update };
-  //       // setPizzas((pizzas) => {
-  //       //   const idx = pizzas.findIndex((pizza) => pizza.id === id);
-  //       //   pizzas[idx] = { ...pizzas[idx], ...update };
-  //       //   console.log('pizzas', pizzas);
-  //       //   return pizzas;
-  //       // });
-  //     }),
-  //     [],
-  //   );
-
-  return <PizzaList pizzas={pizzas} onUpdatePizza={handleUpdatePizza} />;
+  return <PizzaList pizzas={pizzaStore.pizzas} onUpdatePizza={handleUpdatePizza} />;
 });
 
 const PizzaList: FunctionComponent<{
@@ -196,10 +177,10 @@ const PizzaItem: FunctionComponent<{
   );
 });
 
-const PizzaHeader: FunctionComponent<{ title: string }> = ({ title }) => {
+const PizzaHeader: FunctionComponent<{ title: string }> = observer(({ title }) => {
   console.log('PizzaHeader');
   return <div>Header: {title}</div>;
-};
+});
 
 export const PastaContainer: FunctionComponent = () => {
   console.log('PastaContainer');
