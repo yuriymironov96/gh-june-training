@@ -96,7 +96,7 @@ export const PizzaContainer: FunctionComponent = observer(() => {
       const idx = pizzas.findIndex((pizza) => pizza.id === id);
       pizzas[idx] = { ...pizzas[idx], ...update };
       console.log('pizzas', pizzas);
-      return pizzas;
+      return [...pizzas];
     });
   }, []);
 
@@ -151,6 +151,7 @@ const PizzaItem: FunctionComponent<{
       const toppings = pizza.toppings;
       toppings.push(item.value);
       const uniqueToppings = [...new Set(toppings)];
+      // here I pretend that onUpdatePizza might take some time so I implement "optimistic" update
       setCurrentPizza((pizza) => ({ ...pizza, toppings: uniqueToppings }));
       onUpdatePizza(pizza.id, { toppings: uniqueToppings });
     },
@@ -164,12 +165,14 @@ const PizzaItem: FunctionComponent<{
       if (index !== -1) {
         toppings.splice(index, 1);
       }
+      // here I pretend that onUpdatePizza might take some time so I implement "optimistic" update
       setCurrentPizza((pizza) => ({ ...pizza, toppings }));
       onUpdatePizza(pizza.id, { toppings });
     },
     [pizza.id, pizza.toppings, onUpdatePizza],
   );
 
+  // here I just send update of root state, to check how will it behave when state is updated from above
   const handleClick = useCallback(
     () => onUpdatePizza(pizza.id, { isSomething: !pizza.isSomething }),
     [pizza.id, pizza.isSomething, onUpdatePizza],
